@@ -1,9 +1,9 @@
-# Library Management System
+# Bibliotekssystem
 
 **Kurs:** Databasteknik PIA25  
 **Gruppuppgift:** Databassystem för ett bibliotek
 
-Ett databassystem för bibliotek som hanterar böcker, medlemmar och lån. Systemet består av en PostgreSQL-databas och en Python-konsolapplikation.
+Ett enkelt bibliotekssystem som hanterar böcker, medlemmar och lån. Byggt med PostgreSQL och Python.
 
 ## Projektstruktur
 
@@ -12,17 +12,16 @@ library_system/
 ├── database/
 │   ├── schema.sql           # Databasschema
 │   ├── testdata.sql         # Testdata
-│   └── queries.sql          # Alla SQL-queries
+│   └── queries.sql          # SQL-queries
 ├── src/
-│   ├── __init__.py
-│   ├── main.py             # Huvudprogram med meny
-│   ├── database.py         # Databasanslutning
-│   ├── book_manager.py     # Bokhantering
-│   ├── member_manager.py   # Medlemshantering
-│   └── loan_manager.py     # Lånehantering
-├── requirements.txt        # Python-paket
-├── README.md              # Denna fil
-└── .gitignore             # Git ignore-filer
+│   ├── models.py            # SQLAlchemy models
+│   ├── database.py          # Databasanslutning
+│   ├── main.py              # Huvudprogram
+│   ├── book_manager.py      # Bokhantering
+│   ├── member_manager.py    # Medlemshantering
+│   └── loan_manager.py      # Lånehantering
+├── requirements.txt         # Python-paket
+└── README.md                # Denna fil
 ```
 
 ## Installation
@@ -36,103 +35,71 @@ cd library_system
 
 ### 2. Skapa virtuell miljö
 
+**Mac/Linux:**
 ```bash
 python3 -m venv .venv
-source .venv/bin/activate  # På Windows: .venv\Scripts\activate
+source .venv/bin/activate
 ```
 
-### 3. Installera dependencies
+**Windows/PC:**
+```cmd
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+### 3. Installera paket
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Konfigurera databas
+### 4. Sätt upp databasen
 
 1. Skapa en PostgreSQL-databas:
    ```sql
    CREATE DATABASE library_db;
    ```
 
-2. Sätt miljövariabler (eller skapa en `.env` fil):
-   ```bash
-   export POSTGRES_DB=library_db
-   export POSTGRES_USER=postgres
-   export POSTGRES_PASSWORD=ditt_lösenord
-   export POSTGRES_HOST=localhost
-   export POSTGRES_PORT=5432
+2. Skapa en `.env` fil i projektets root:
+   ```
+   POSTGRES_DB=library_db
+   POSTGRES_USER=postgres
+   POSTGRES_PASSWORD=ditt_lösenord
+   POSTGRES_HOST=localhost
+   POSTGRES_PORT=5432
    ```
 
 3. Kör schema och testdata:
+
+   **Mac/Linux:**
    ```bash
    psql -U postgres -d library_db -f database/schema.sql
    psql -U postgres -d library_db -f database/testdata.sql
    ```
 
-## Användning
+   **Windows/PC:**
+   ```cmd
+   psql -U postgres -d library_db -f database\schema.sql
+   psql -U postgres -d library_db -f database\testdata.sql
+   ```
 
-Kör applikationen:
+## Kör programmet
 
 ```bash
 python -m src.main
 ```
 
-Eller om du är i `src/` mappen:
-
-```bash
-python main.py
-```
-
 ## Funktioner
 
-### Bokhantering
-- Visa alla böcker
-- Sök efter bok (titel eller författare)
-- Lägg till ny bok
-- Visa tillgängliga böcker
-
-### Medlemshantering
-- Visa alla medlemmar
-- Lägg till ny medlem
-- Sök efter medlem (namn eller email)
-
-### Lånehantering
-- Registrera nytt lån
-- Registrera återlämning
-- Visa aktiva lån
-- Visa försenade lån
-
-### Statistik och rapporter
-- Visa mest lånade böcker
-- Visa medlem med flest lån
-- Visa översikt av biblioteket
+- **Bokhantering:** Visa, sök, lägg till böcker
+- **Medlemshantering:** Visa, sök, lägg till medlemmar
+- **Lånehantering:** Registrera lån och återlämningar
+- **Statistik:** Se mest lånade böcker, försenade lån, etc.
 
 ## SQL Queries
 
-Alla SQL-queries finns i `database/queries.sql` och inkluderar:
-- Grundläggande SELECT-queries
-- JOIN-queries
-- Aggregering och analys
+Alla queries finns i `database/queries.sql` - både enkla SELECT-queries och mer avancerade med JOIN och aggregering.
 
-## Grupparbete med GitHub Projects
+## Grupparbete
 
-För att använda GitHub Projects för att organisera arbetet:
-
-1. Gå till ditt GitHub-repo
-2. Klicka på "Projects" i repots meny
-3. Skapa ett nytt Project board
-4. Skapa kolumner för: "To Do", "In Progress", "Review", "Done"
-5. Skapa issues för varje uppgift och lägg till dem i projektet
-
-## Bidrag
-
-Varje gruppmedlem bör:
-- Skapa en egen branch för sina ändringar
-- Commita ofta med beskrivande meddelanden
-- Skapa pull requests för review
-- Testa sina ändringar innan merge
-
-## Licens
-
-Detta projekt är en del av kursen Databasteknik PIA25.
-
+Se `COLLABORATION_GUIDE.md` för instruktioner om hur man jobbar tillsammans med GitHub.

@@ -1,87 +1,82 @@
-"""
-Book management functions for the Library Management System.
-"""
+"""Hantering av böcker."""
 
 from typing import List, Dict, Optional
-from .database import get_connection
+from sqlalchemy import or_
+from .database import get_session
+from .models import Book
+
+
+def _book_to_dict(book: Book) -> Dict:
+    """Konverterar Book-objekt till dictionary."""
+    return {
+        'id': book.id,
+        'title': book.title,
+        'author': book.author,
+        'isbn': book.isbn,
+        'publication_year': book.publication_year,
+        'category': book.category,
+        'total_copies': book.total_copies,
+        'available_copies': book.available_copies
+    }
 
 
 def get_all_books() -> List[Dict]:
-    """Retrieve all books from the database."""
-    with get_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                SELECT id, title, author, isbn, publication_year, 
-                       category, total_copies, available_copies
-                FROM books
-                ORDER BY title
-            """)
-            columns = [desc[0] for desc in cur.description]
-            return [dict(zip(columns, row)) for row in cur.fetchall()]
+    """Hämtar alla böcker."""
+    with get_session() as session:
+        books = session.query(Book).order_by(Book.title).all()
+        return [_book_to_dict(book) for book in books]
 
 
 def search_books(search_term: str) -> List[Dict]:
-    """Search for books by title or author."""
-    with get_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                SELECT id, title, author, isbn, publication_year, 
-                       category, total_copies, available_copies
-                FROM books
-                WHERE title ILIKE %s OR author ILIKE %s
-                ORDER BY title
-            """, (f"%{search_term}%", f"%{search_term}%"))
-            columns = [desc[0] for desc in cur.description]
-            return [dict(zip(columns, row)) for row in cur.fetchall()]
+    """Söker efter böcker på titel eller författare."""
+    with get_session() as session:
+        search = f"%{search_term}%"
+        books = session.query(Book).filter(
+            or_(
+                Book.title.ilike(search),
+                Book.author.ilike(search)
+            )
+        ).order_by(Book.title).all()
+        return [_book_to_dict(book) for book in books]
 
 
 def add_book(title: str, author: str, isbn: Optional[str] = None,
              publication_year: Optional[int] = None, category: Optional[str] = None,
              total_copies: int = 1) -> bool:
-    """Add a new book to the database."""
+    """Lägger till en ny bok."""
     try:
-        with get_connection() as conn:
-            with conn.cursor() as cur:
-                cur.execute("""
-                    INSERT INTO books (title, author, isbn, publication_year, 
-                                     category, total_copies, available_copies)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
-                """, (title, author, isbn, publication_year, category, 
-                      total_copies, total_copies))
-        return True
+        with get_session() as session:
+            book = Book(
+                title=title,
+                author=author,
+                isbn=isbn,
+                publication_year=publication_year,
+                category=category,
+                total_copies=total_copies,
+                available_copies=total_copies
+            )
+            session.add(book)
+            session.commit()
+            return True
     except Exception as e:
-        print(f"Error adding book: {e}")
+        print(f"Kunde inte lägga till bok: {e}")
         return False
 
 
 def get_available_books() -> List[Dict]:
-    """Get all books that are currently available (available_copies > 0)."""
-    with get_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                SELECT id, title, author, isbn, publication_year, 
-                       category, total_copies, available_copies
-                FROM books
-                WHERE available_copies > 0
-                ORDER BY title
-            """)
-            columns = [desc[0] for desc in cur.description]
-            return [dict(zip(columns, row)) for row in cur.fetchall()]
+    """Hämtar alla tillgängliga böcker."""
+    with get_session() as session:
+        books = session.query(Book).filter(
+            Book.available_copies > 0
+        ).order_by(Book.title).all()
+        return [_book_to_dict(book) for book in books]
 
 
 def get_book_by_id(book_id: int) -> Optional[Dict]:
-    """Get a book by its ID."""
-    with get_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                SELECT id, title, author, isbn, publication_year, 
-                       category, total_copies, available_copies
-                FROM books
-                WHERE id = %s
-            """, (book_id,))
-            row = cur.fetchone()
-            if row:
-                columns = [desc[0] for desc in cur.description]
-                return dict(zip(columns, row))
-            return None
+    """Hämtar en bok via ID."""
+    with get_session() as session:
+        book = session.query(Book).filter(Book.id == book_id).first()
+        if book:
+            return _book_to_dict(book)
+        return None
 

@@ -1,7 +1,7 @@
--- Library Management System Test Data
--- Insert test data for testing the library system
+-- Testdata för biblioteket
+-- Kör detta efter schema.sql
 
--- Insert Books (minst 15 böcker)
+-- Lägg till böcker
 INSERT INTO books (title, author, isbn, publication_year, category, total_copies, available_copies) VALUES
 ('The Great Gatsby', 'F. Scott Fitzgerald', '978-0-7432-7356-5', 1925, 'Fiction', 3, 1),
 ('1984', 'George Orwell', '978-0-452-28423-4', 1949, 'Fiction', 2, 0),
@@ -19,7 +19,7 @@ INSERT INTO books (title, author, isbn, publication_year, category, total_copies
 ('Introduction to Algorithms', 'Thomas H. Cormen', '978-0-262-03384-8', 2009, 'Technology', 2, 1),
 ('The Lord of the Rings', 'J.R.R. Tolkien', '978-0-544-00035-4', 1954, 'Fantasy', 4, 2);
 
--- Insert Members (minst 10 medlemmar)
+-- Lägg till medlemmar
 INSERT INTO members (first_name, last_name, email, phone, membership_date) VALUES
 ('Anna', 'Andersson', 'anna.andersson@email.com', '070-123-4567', '2023-01-15'),
 ('Erik', 'Eriksson', 'erik.eriksson@email.com', '070-234-5678', '2023-02-20'),
@@ -32,8 +32,8 @@ INSERT INTO members (first_name, last_name, email, phone, membership_date) VALUE
 ('Lisa', 'Olsson', 'lisa.olsson@email.com', '070-901-2345', '2024-06-15'),
 ('Peter', 'Lindberg', 'peter.lindberg@email.com', '070-012-3456', '2024-07-20');
 
--- Insert Loans (minst 20 lån - både aktiva och återlämnade)
--- Aktiva lån (inte återlämnade)
+-- Lägg till lån
+-- Aktiva lån (inte återlämnade än)
 INSERT INTO loans (book_id, member_id, loan_date, due_date) VALUES
 (1, 1, '2024-11-01', '2024-11-15'),
 (2, 2, '2024-11-05', '2024-11-19'),
@@ -43,7 +43,7 @@ INSERT INTO loans (book_id, member_id, loan_date, due_date) VALUES
 (11, 6, '2024-11-15', '2024-11-29'),
 (13, 7, '2024-11-18', '2024-12-02');
 
--- Försenade lån (due_date har passerat men inte återlämnade)
+-- Försenade lån (förfallodatum har passerat)
 INSERT INTO loans (book_id, member_id, loan_date, due_date) VALUES
 (2, 8, '2024-10-15', '2024-10-29'),
 (12, 9, '2024-10-20', '2024-11-03'),
@@ -61,4 +61,3 @@ INSERT INTO loans (book_id, member_id, loan_date, due_date, return_date) VALUES
 (3, 8, '2024-10-05', '2024-10-19', '2024-10-17'),
 (5, 9, '2024-10-10', '2024-10-24', '2024-10-22'),
 (8, 10, '2024-10-15', '2024-10-29', '2024-10-27');
-

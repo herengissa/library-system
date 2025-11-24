@@ -1,9 +1,4 @@
-"""
-Library Management System - Main Application
-Kurs: Databasteknik PIA25
-
-A console-based library management system for managing books, members, and loans.
-"""
+"""Huvudprogram för bibliotekssystemet."""
 
 from .book_manager import (
     get_all_books, search_books, add_book, get_available_books, get_book_by_id
@@ -17,240 +12,231 @@ from .loan_manager import (
 
 
 def show_menu():
-    """Display the main menu."""
+    """Visar huvudmenyn."""
     print("\n" + "="*50)
-    print("    LIBRARY MANAGEMENT SYSTEM")
+    print("    BIBLIOTEKSSYSTEM")
     print("="*50)
-    print("1. Book Management")
-    print("2. Member Management")
-    print("3. Loan Management")
-    print("4. Statistics & Reports")
-    print("0. Exit")
+    print("1. Bokhantering")
+    print("2. Medlemshantering")
+    print("3. Lånehantering")
+    print("4. Statistik & Rapporter")
+    print("0. Avsluta")
     print("-"*50)
 
 
 def book_menu():
-    """Handle book management operations."""
+    """Hanterar bokhantering."""
     while True:
-        print("\n--- BOOK MANAGEMENT ---")
-        print("1. View all books")
-        print("2. Search books")
-        print("3. Add new book")
-        print("4. View available books")
-        print("0. Back to main menu")
+        print("\n--- BOKHANTERING ---")
+        print("1. Visa alla böcker")
+        print("2. Sök böcker")
+        print("3. Lägg till ny bok")
+        print("4. Visa tillgängliga böcker")
+        print("0. Tillbaka till huvudmeny")
         
-        choice = input("Choose option: ").strip()
+        choice = input("Välj alternativ: ").strip()
         
         if choice == "0":
             break
         elif choice == "1":
             books = get_all_books()
-            print(f"\nTotal books: {len(books)}")
+            print(f"\nTotalt antal böcker: {len(books)}")
             for book in books:
-                print(f"  [{book['id']}] {book['title']} by {book['author']} "
-                      f"({book['available_copies']}/{book['total_copies']} available)")
+                print(f"  [{book['id']}] {book['title']} av {book['author']} "
+                      f"({book['available_copies']}/{book['total_copies']} tillgängliga)")
         elif choice == "2":
-            search_term = input("Enter search term (title or author): ").strip()
+            search_term = input("Sökterm (titel eller författare): ").strip()
             books = search_books(search_term)
             if books:
-                print(f"\nFound {len(books)} book(s):")
+                print(f"\nHittade {len(books)} bok(er):")
                 for book in books:
-                    print(f"  [{book['id']}] {book['title']} by {book['author']}")
+                    print(f"  [{book['id']}] {book['title']} av {book['author']}")
             else:
-                print("No books found.")
+                print("Inga böcker hittades.")
         elif choice == "3":
-            title = input("Title: ").strip()
-            author = input("Author: ").strip()
-            isbn = input("ISBN (optional): ").strip() or None
-            year = input("Publication year (optional): ").strip()
+            title = input("Titel: ").strip()
+            author = input("Författare: ").strip()
+            isbn = input("ISBN (valfritt): ").strip() or None
+            year = input("Utgivningsår (valfritt): ").strip()
             year = int(year) if year else None
-            category = input("Category (optional): ").strip() or None
-            copies = input("Total copies (default 1): ").strip()
+            category = input("Kategori (valfritt): ").strip() or None
+            copies = input("Antal exemplar (standard 1): ").strip()
             copies = int(copies) if copies else 1
             
             if add_book(title, author, isbn, year, category, copies):
-                print("Book added successfully!")
+                print("Bok tillagd!")
             else:
-                print("Failed to add book.")
+                print("Kunde inte lägga till bok.")
         elif choice == "4":
             books = get_available_books()
-            print(f"\nAvailable books: {len(books)}")
+            print(f"\nTillgängliga böcker: {len(books)}")
             for book in books:
-                print(f"  [{book['id']}] {book['title']} by {book['author']} "
-                      f"({book['available_copies']} available)")
+                print(f"  [{book['id']}] {book['title']} av {book['author']} "
+                      f"({book['available_copies']} tillgängliga)")
         else:
-            print("Invalid choice. Try again.")
+            print("Ogiltigt val. Försök igen.")
 
 
 def member_menu():
-    """Handle member management operations."""
+    """Hanterar medlemshantering."""
     while True:
-        print("\n--- MEMBER MANAGEMENT ---")
-        print("1. View all members")
-        print("2. Add new member")
-        print("3. Search members")
-        print("0. Back to main menu")
+        print("\n--- MEDLEMSHANTERING ---")
+        print("1. Visa alla medlemmar")
+        print("2. Lägg till ny medlem")
+        print("3. Sök medlemmar")
+        print("0. Tillbaka till huvudmeny")
         
-        choice = input("Choose option: ").strip()
+        choice = input("Välj alternativ: ").strip()
         
         if choice == "0":
             break
         elif choice == "1":
             members = get_all_members()
-            print(f"\nTotal members: {len(members)}")
+            print(f"\nTotalt antal medlemmar: {len(members)}")
             for member in members:
                 print(f"  [{member['id']}] {member['first_name']} {member['last_name']} "
                       f"({member['email']})")
         elif choice == "2":
-            first_name = input("First name: ").strip()
-            last_name = input("Last name: ").strip()
+            first_name = input("Förnamn: ").strip()
+            last_name = input("Efternamn: ").strip()
             email = input("Email: ").strip()
-            phone = input("Phone (optional): ").strip() or None
+            phone = input("Telefon (valfritt): ").strip() or None
             
             if add_member(first_name, last_name, email, phone):
-                print("Member added successfully!")
+                print("Medlem tillagd!")
             else:
-                print("Failed to add member.")
+                print("Kunde inte lägga till medlem.")
         elif choice == "3":
-            search_term = input("Enter search term (name or email): ").strip()
+            search_term = input("Sökterm (namn eller email): ").strip()
             members = search_members(search_term)
             if members:
-                print(f"\nFound {len(members)} member(s):")
+                print(f"\nHittade {len(members)} medlem(mar):")
                 for member in members:
                     print(f"  [{member['id']}] {member['first_name']} {member['last_name']} "
                           f"({member['email']})")
             else:
-                print("No members found.")
+                print("Inga medlemmar hittades.")
         else:
-            print("Invalid choice. Try again.")
+            print("Ogiltigt val. Försök igen.")
 
 
 def loan_menu():
-    """Handle loan management operations."""
+    """Hanterar lånehantering."""
     while True:
-        print("\n--- LOAN MANAGEMENT ---")
-        print("1. Register new loan")
-        print("2. Register return")
-        print("3. View active loans")
-        print("4. View overdue loans")
-        print("0. Back to main menu")
+        print("\n--- LÅNEHANTERING ---")
+        print("1. Registrera nytt lån")
+        print("2. Registrera återlämning")
+        print("3. Visa aktiva lån")
+        print("4. Visa försenade lån")
+        print("0. Tillbaka till huvudmeny")
         
-        choice = input("Choose option: ").strip()
+        choice = input("Välj alternativ: ").strip()
         
         if choice == "0":
             break
         elif choice == "1":
             try:
-                book_id = int(input("Book ID: ").strip())
-                member_id = int(input("Member ID: ").strip())
-                days = input("Loan period in days (default 14): ").strip()
+                book_id = int(input("Bok-ID: ").strip())
+                member_id = int(input("Medlems-ID: ").strip())
+                days = input("Låneperiod i dagar (standard 14): ").strip()
                 days = int(days) if days else 14
                 
                 if register_loan(book_id, member_id, days):
-                    print("Loan registered successfully!")
+                    print("Lån registrerat!")
                 else:
-                    print("Failed to register loan.")
+                    print("Kunde inte registrera lån.")
             except ValueError:
-                print("Error: Invalid input. Please enter numbers.")
+                print("Fel: Ogiltig inmatning. Ange siffror.")
         elif choice == "2":
             try:
-                loan_id = int(input("Loan ID: ").strip())
+                loan_id = int(input("Lån-ID: ").strip())
                 if register_return(loan_id):
-                    print("Return registered successfully!")
+                    print("Återlämning registrerad!")
                 else:
-                    print("Failed to register return.")
+                    print("Kunde inte registrera återlämning.")
             except ValueError:
-                print("Error: Invalid input. Please enter a number.")
+                print("Fel: Ogiltig inmatning. Ange ett nummer.")
         elif choice == "3":
             loans = get_active_loans()
-            print(f"\nActive loans: {len(loans)}")
+            print(f"\nAktiva lån: {len(loans)}")
             for loan in loans:
                 print(f"  [{loan['id']}] {loan['book_title']} - "
-                      f"{loan['member_name']} (Due: {loan['due_date']})")
+                      f"{loan['member_name']} (Förfaller: {loan['due_date']})")
         elif choice == "4":
             loans = get_overdue_loans()
-            print(f"\nOverdue loans: {len(loans)}")
+            print(f"\nFörsenade lån: {len(loans)}")
             for loan in loans:
                 print(f"  [{loan['id']}] {loan['book_title']} - "
-                      f"{loan['member_name']} ({loan['days_overdue']} days overdue)")
+                      f"{loan['member_name']} ({loan['days_overdue']} dagar försenad)")
         else:
-            print("Invalid choice. Try again.")
+            print("Ogiltigt val. Försök igen.")
 
 
 def statistics_menu():
-    """Display statistics and reports."""
-    from .database import get_connection
+    """Visar statistik och rapporter."""
+    from sqlalchemy import func, and_
+    from datetime import date
+    from .database import get_session
+    from .models import Book, Member, Loan
     
-    print("\n--- STATISTICS & REPORTS ---")
+    print("\n--- STATISTIK & RAPPORTER ---")
     
-    with get_connection() as conn:
-        with conn.cursor() as cur:
-            # Total books
-            cur.execute("SELECT COUNT(*) FROM books")
-            total_books = cur.fetchone()[0]
-            
-            # Total members
-            cur.execute("SELECT COUNT(*) FROM members")
-            total_members = cur.fetchone()[0]
-            
-            # Active loans
-            cur.execute("SELECT COUNT(*) FROM loans WHERE return_date IS NULL")
-            active_loans = cur.fetchone()[0]
-            
-            # Overdue loans
-            cur.execute("""
-                SELECT COUNT(*) FROM loans 
-                WHERE return_date IS NULL AND due_date < CURRENT_DATE
-            """)
-            overdue_loans = cur.fetchone()[0]
-            
-            # Most borrowed books
-            cur.execute("""
-                SELECT b.title, COUNT(l.id) AS loan_count
-                FROM books b
-                JOIN loans l ON b.id = l.book_id
-                GROUP BY b.id, b.title
-                ORDER BY loan_count DESC
-                LIMIT 5
-            """)
-            popular_books = cur.fetchall()
-            
-            # Member with most loans
-            cur.execute("""
-                SELECT m.first_name || ' ' || m.last_name AS name, COUNT(l.id) AS loan_count
-                FROM members m
-                JOIN loans l ON m.id = l.member_id
-                GROUP BY m.id, m.first_name, m.last_name
-                ORDER BY loan_count DESC
-                LIMIT 1
-            """)
-            top_member = cur.fetchone()
+    with get_session() as session:
+        total_books = session.query(Book).count()
+        total_members = session.query(Member).count()
+        active_loans = session.query(Loan).filter(
+            Loan.return_date.is_(None)
+        ).count()
+        
+        today = date.today()
+        overdue_loans = session.query(Loan).filter(
+            and_(
+                Loan.return_date.is_(None),
+                Loan.due_date < today
+            )
+        ).count()
+        
+        popular_books = session.query(
+            Book.title,
+            func.count(Loan.id).label('loan_count')
+        ).join(Loan).group_by(Book.id, Book.title).order_by(
+            func.count(Loan.id).desc()
+        ).limit(5).all()
+        
+        top_member = session.query(
+            Member.first_name,
+            Member.last_name,
+            func.count(Loan.id).label('loan_count')
+        ).join(Loan).group_by(
+            Member.id, Member.first_name, Member.last_name
+        ).order_by(func.count(Loan.id).desc()).first()
     
-    print(f"\nLibrary Overview:")
-    print(f"  Total books: {total_books}")
-    print(f"  Total members: {total_members}")
-    print(f"  Active loans: {active_loans}")
-    print(f"  Overdue loans: {overdue_loans}")
+    print(f"\nBiblioteksöversikt:")
+    print(f"  Totalt antal böcker: {total_books}")
+    print(f"  Totalt antal medlemmar: {total_members}")
+    print(f"  Aktiva lån: {active_loans}")
+    print(f"  Försenade lån: {overdue_loans}")
     
-    print(f"\nTop 5 Most Borrowed Books:")
+    print(f"\nTop 5 Mest Lånade Böcker:")
     for i, (title, count) in enumerate(popular_books, 1):
-        print(f"  {i}. {title} ({count} loans)")
+        print(f"  {i}. {title} ({count} lån)")
     
     if top_member:
-        print(f"\nMember with Most Loans:")
-        print(f"  {top_member[0]} ({top_member[1]} loans)")
+        name = f"{top_member.first_name} {top_member.last_name}"
+        print(f"\nMedlem med Flest Lån:")
+        print(f"  {name} ({top_member.loan_count} lån)")
 
 
 def main():
-    """Main application loop."""
-    print("Welcome to the Library Management System!")
+    """Huvudprogramloop."""
+    print("Välkommen till Bibliotekssystemet!")
     
     while True:
         show_menu()
-        choice = input("Choose option (0-4): ").strip()
+        choice = input("Välj alternativ (0-4): ").strip()
         
         if choice == "0":
-            print("Goodbye!")
+            print("Hej då!")
             break
         elif choice == "1":
             book_menu()
@@ -261,9 +247,8 @@ def main():
         elif choice == "4":
             statistics_menu()
         else:
-            print("Invalid choice. Try again.")
+            print("Ogiltigt val. Försök igen.")
 
 
 if __name__ == "__main__":
     main()
-

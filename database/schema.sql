@@ -1,20 +1,19 @@
--- Library Management System Database Schema
--- PostgreSQL Database Schema for Library System
+-- Databasschema för biblioteket
 -- Kurs: Databasteknik PIA25
 
--- Skapa databas (kör detta först i psql som superuser)
+-- Först: skapa databasen (kör som superuser)
 -- CREATE DATABASE library_db;
 
--- Byt anslutning till library_db innan du kör resterande script
--- I pgAdmin: högerklicka på library_db och välj "Query Tool"
+-- Sen: anslut till library_db
+-- I pgAdmin: högerklicka på library_db -> Query Tool
 -- I psql: \connect library_db
 
--- Säkerställ ren miljö
+-- Rensa allt först (ta bort om du vill behålla gamla data)
 DROP SCHEMA IF EXISTS public CASCADE;
 CREATE SCHEMA public;
 SET search_path TO public;
 
--- Tabell: Books (Böcker)
+-- Tabell för böcker
 CREATE TABLE books (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -25,11 +24,10 @@ CREATE TABLE books (
     total_copies INTEGER DEFAULT 1 CHECK (total_copies > 0),
     available_copies INTEGER DEFAULT 1 CHECK (available_copies >= 0),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    -- Säkerställ att available_copies inte överstiger total_copies
-    CHECK (available_copies <= total_copies)
+    CHECK (available_copies <= total_copies)  -- kan inte ha fler tillgängliga än totalt
 );
 
--- Tabell: Members (Medlemmar)
+-- Tabell för medlemmar
 CREATE TABLE members (
     id SERIAL PRIMARY KEY,
     first_name VARCHAR(100) NOT NULL,
@@ -40,7 +38,7 @@ CREATE TABLE members (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabell: Loans (Lån)
+-- Tabell för lån
 CREATE TABLE loans (
     id SERIAL PRIMARY KEY,
     book_id INTEGER NOT NULL REFERENCES books(id) ON DELETE CASCADE,
@@ -49,13 +47,11 @@ CREATE TABLE loans (
     due_date DATE NOT NULL,
     return_date DATE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    -- Säkerställ att due_date är efter loan_date
-    CHECK (due_date >= loan_date),
-    -- Säkerställ att return_date är efter loan_date om den är satt
-    CHECK (return_date IS NULL OR return_date >= loan_date)
+    CHECK (due_date >= loan_date),  -- förfallodatum måste vara efter lånedatum
+    CHECK (return_date IS NULL OR return_date >= loan_date)  -- återlämning kan inte vara före lån
 );
 
--- Index för prestanda
+-- Index för att göra queries snabbare
 CREATE INDEX idx_books_title ON books(title);
 CREATE INDEX idx_books_author ON books(author);
 CREATE INDEX idx_books_category ON books(category);
@@ -67,9 +63,3 @@ CREATE INDEX idx_loans_member_id ON loans(member_id);
 CREATE INDEX idx_loans_loan_date ON loans(loan_date);
 CREATE INDEX idx_loans_due_date ON loans(due_date);
 CREATE INDEX idx_loans_return_date ON loans(return_date);
-
--- Kommentarer för dokumentation
-COMMENT ON TABLE books IS 'Stores information about books in the library';
-COMMENT ON TABLE members IS 'Stores information about library members';
-COMMENT ON TABLE loans IS 'Stores information about book loans';
-

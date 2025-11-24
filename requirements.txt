@@ -1,2 +1,10 @@
-psycopg2-binary==2.9.9
+# Python-paket för bibliotekssystemet
 
+# ORM för databas
+sqlalchemy>=2.0.0
+
+# PostgreSQL-driver
+psycopg2-binary>=2.9.9
+
+# Miljövariabler från .env-fil
+python-dotenv>=1.0.0
