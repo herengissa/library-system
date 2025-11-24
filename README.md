@@ -99,7 +99,3 @@ python -m src.main
 ## SQL Queries
 
 Alla queries finns i `database/queries.sql` - både enkla SELECT-queries och mer avancerade med JOIN och aggregering.
-
-## Grupparbete
-
-Se `COLLABORATION_GUIDE.md` för instruktioner om hur man jobbar tillsammans med GitHub.
